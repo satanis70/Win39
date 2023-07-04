@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Win39</string>
+    <string name="roulette">Roulette</string>
+    <string name="arrow">Arrow</string>
+    <string name="start">Start</string>
+    <string name="title_activity_splash">SplashActivity</string>
+</resources>
