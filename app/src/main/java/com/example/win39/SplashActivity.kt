@@ -1,11 +1,16 @@
 package com.example.win39
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,16 +42,27 @@ class SplashActivity : ComponentActivity() {
             )
             Column(
                 modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    modifier = Modifier.padding(top = 74.dp),
                     text = resources.getString(R.string.app_name),
                     fontSize = 54.sp,
                     color = RedButton,
                     fontWeight = FontWeight.Bold
                 )
+                GlideImage(
+                    modifier = Modifier
+                        .size(width = 120.dp, height = 120.dp),
+                    model = "http://49.12.202.175/win39/logo.png",
+                    contentDescription = "",
+                )
+                CircularProgressIndicator(modifier = Modifier.padding(top = 128.dp))
             }
+            Handler().postDelayed({
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                finish()
+            }, 3000)
         }
     }
 }
