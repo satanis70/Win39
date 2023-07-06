@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -42,9 +43,16 @@ import com.example.win39.R
 import kotlin.math.roundToInt
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun RouletteScreen() {
     GlideImage(
@@ -56,9 +64,13 @@ fun RouletteScreen() {
     val number = remember {
         mutableStateOf(0)
     }
+    val enabledButton = remember {
+        mutableStateOf(false)
+    }
     val rotationValue = remember {
         mutableStateOf(0f)
     }
+    var text by remember { mutableStateOf("") }
     val context = LocalContext.current
     val angleRot = animateFloatAsState(
         targetValue = rotationValue.value,
@@ -86,17 +98,19 @@ fun RouletteScreen() {
                 .wrapContentWidth()
                 .height(100.dp)
         )
-        var text by remember { mutableStateOf("0") }
 
+        val focusManager = LocalFocusManager.current
         TextField(
             modifier = Modifier
                 .fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-            value = "0",
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.NumberPassword
+            ),
+            value = text,
             onValueChange = {
-                if (text.isNotEmpty()){
-                    text = it
-                }
+                text = it
             },
             placeholder = {
                 Text("Pick a number...")
@@ -121,10 +135,35 @@ fun RouletteScreen() {
             )
         }
         val context = LocalContext.current
+        if (text.isNotEmpty()){
+            enabledButton.value = true
+        }
         Button(
+            enabled = enabledButton.value,
             onClick = {
                 rotationValue.value = (720..1080).random().toFloat() + angleRot.value
-                Toast.makeText(context, text.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    text,
+                    Toast.LENGTH_SHORT
+                ).show()
+                if (text.toInt() == number.value) {
+                    Toast.makeText(
+                        context,
+                        context.resources.getString(R.string.you_won),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    text = ""
+                    enabledButton.value = false
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.resources.getString(R.string.you_lose),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    text = ""
+                    enabledButton.value = false
+                }
             },
             colors = ButtonDefaults.buttonColors(Red),
             modifier = Modifier

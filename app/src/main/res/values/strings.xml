@@ -4,4 +4,6 @@
     <string name="arrow">Arrow</string>
     <string name="start">Start</string>
     <string name="title_activity_splash">SplashActivity</string>
+    <string name="you_won">You won!</string>
+    <string name="you_lose">You lose!</string>
 </resources>
